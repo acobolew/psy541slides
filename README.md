@@ -1,4 +1,4 @@
-This repository contains the slides and RMarkdown notes for the course ["Psych 252: Statistical methods for the behavioral and social sciences"](https://psych252.github.io/) taught by Tobias Gerstenberg at Stanford University. 
+This repository contains the slides and RMarkdown notes for the course PSY 541 Advanced Psychological Statistics and Methods II taught by Alan Cobo-Lewis at the University of Maine. It is forked from slides and RMarkdown notes for ["Psych 252: Statistical methods for the behavioral and social sciences"](https://psych252.github.io/) taught by Tobias Gerstenberg at Stanford University.
 
 ## Course description
 
@@ -6,9 +6,8 @@ This course offers an introduction to advanced topics in statistics with the foc
 
 ## Folders
 
-Each folder contains the materials for one 90 min class session. This includes the keynote slides (.key), a pdf of the slides, an RMarkdown script that implements all the technical materials discussed in that class, as well as student feedback on that class. 
+Each folder contains the materials for one 90 min class session. This includes the keynote slides (.key), a pdf of the slides, an RMarkdown script that implements all the technical materials discussed in that class, as well as student feedback on that class.
 
 You can find all of the notes compiled into a single book [here](https://psych252.github.io/psych252book/).
 
-Please don't hesitate to reach out or post an issue if you have questions about the materials. Thanks! 
-
+Please don't hesitate to reach out or post an issue if you have questions about the materials. Thanks!
