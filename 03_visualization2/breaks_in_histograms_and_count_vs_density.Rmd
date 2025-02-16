@@ -1,0 +1,59 @@
+---
+title: "breaks in histograms (and count vs density)"
+author: "Alan Cobo-Lewis"
+date: "2025-02-12"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r load library}
+library(tidyverse)
+```
+
+## with default `geom_histogram()`, first 7 bins span just over 0 to just over 5000, so that's a binwidth of about 714
+```{r}
+ggplot(diamonds, aes(x=price)) + geom_histogram()
+```
+
+## Try binwidths of exactly 700 from 0 to 7000, then one big bin from 7000 to 20000
+```{r}
+ggplot(diamonds, aes(x=price)) +
+  geom_histogram(
+    breaks=c(0,700,1400,2100,2800,3500,4200, 4900, 5600,6300,7000, 20000)
+  ) +
+  labs(title="Uneven break spacing for sure, but what's wrong here?")
+```
+
+## Make the same weird plot by *explicitly* specifying the y aesthetic for `geom_histogram()` and `stat_bin()`. Notice that we have to use the `after_stat()` wrapper because the `count` variable doesn't exist in the `diamonds` dataframe--it's *calculated* by the `stat_bin()` function
+```{r}
+ggplot(diamonds, aes(x=price)) +
+  geom_histogram(
+    aes(y=after_stat(count)),
+    breaks=c(0,700,1400,2100,2800,3500,4200, 4900, 5600,6300,7000, 20000)
+  ) +
+  labs(title="Still uneven break spacing, but what's still wrong?")
+```
+
+## Now change from default `aes(y=after_stat(count))` to more appropriate `aes(y=after_stat(density))`
+```{r}
+ggplot(diamonds, aes(x=price)) +
+  geom_histogram(
+    aes(y=after_stat(density)),
+    breaks=c(0,700,1400,2100,2800,3500,4200, 4900, 5600,6300,7000, 20000)
+  ) +
+  labs(title='Makes more sense with density (count per unit x variable) on y axis')
+```
+
+## And that's why the alternative is called `geom_density()`
+```{r}
+ggplot(diamonds, aes(x=price)) +
+  geom_histogram(
+    aes(y=after_stat(density)),
+    breaks=c(0,700,1400,2100,2800,3500,4200, 4900, 5600,6300,7000, 20000)
+  ) +
+  geom_density(color='red') +
+  labs(title='Same y axis works for geom_density() and for\ngeom_histogram(aes(y=after_stat(density)))')
+```

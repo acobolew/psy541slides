@@ -1,0 +1,70 @@
+---
+title: "Same Smoother vs Pooled Smoother"
+author: "Alan Cobo-Lewis"
+date: "2025-02-11"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+```{r load library}
+library(tidyverse)
+```
+
+## The just a scatterplot with a smoother, 1 panel (throughout this document we'll use `alpha=.05` in `geom_point()` because we have over 50,000 data points)
+```{r}
+ggplot(diamonds, aes(x=carat, y=price)) +
+  geom_point(alpha=.05) +
+  geom_smooth()
+```
+
+## Adding `aes(color=clarity)` overlays scatterplots and fits a different smoother to each clarity, 1 panel
+```{r}
+ggplot(diamonds, aes(x=carat, y=price, color=clarity, fill=clarity)) +
+  geom_point(alpha=.05) +
+  geom_smooth()
+```
+
+## Moving `aes(color=clarity)` from `ggplot()` to `geom_point()` lets a single smoother fit the entire dataset, 1 panel
+```{r}
+ggplot(diamonds, aes(x=carat, y=price)) +
+  geom_point(aes(color=clarity), alpha=.05) +
+  geom_smooth()
+```
+
+## Using `facet_wrap(~clarity)` instead of `aes(color=clarity)` causes each panel to have its own smooth
+```{r}
+ggplot(diamonds, aes(x=carat, y=price)) +
+  geom_point(alpha=.05) +
+  geom_smooth() +
+  facet_wrap(~clarity)
+```
+
+## If you want the same smooth in each panel then you have to transform the data in `geom_smooth()` to 'NULL out' the facetting variable
+```{r}
+ggplot(diamonds, aes(x=carat, y=price)) +
+  geom_point() +
+  geom_smooth(data=~transform(., clarity=NULL)) +
+  facet_wrap(~clarity)
+```
+
+## With two calls to `geom_smooth()`, you can include both the individual *and* the pooled smooth line in each panel! (setting the pooled curve to `linetype='dashed'` and `color='black'` to make it easier to distinguish from panel-specific smooths)
+```{r}
+ggplot(diamonds, aes(x=carat, y=price)) +
+  geom_point(aes(color=clarity), alpha=.05) +
+  geom_smooth(aes(color=clarity, fill=clarity)) +
+  geom_smooth(data=~transform(., clarity=NULL), linetype='dashed', color='black') +
+  facet_wrap(~clarity)
+```
+
+## Alternatively, `facet_grid()` (but not `facet_wrap()`) has a `margins=TRUE` option to get the pooled model...but it gets plotted in an extra panel instead of replicated in each of the individual panels (also you can't wrap your panels)
+```{r}
+ggplot(diamonds, aes(x=carat, y=price)) +
+  geom_point(alpha=.05) +
+  geom_smooth() +
+  facet_grid(~clarity, margins=TRUE)
+```

@@ -1,0 +1,55 @@
+---
+title: "anscombe"
+author: "Alan Cobo-Lewis"
+date: "2025-01-29"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+library("knitr")     # for rendering the RMarkdown file
+library("tidyverse") # for plotting (and many more cool things we'll discover later)
+
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+The data are in the `datasets` package, which is already loaded into R by default. (If it weren't, you could always do `library(datasets)` -- after doing `install.packages(datasets)` if you hadn't done it before). The data are in the dataframe `anscombe` (which doesn't follow the `df.` naming convention that our text does--sorry).
+
+```{r look at the data}
+anscombe
+```
+
+The `anscombe` dataframe is "wide". It's easier to work with in the `tidyverse` if its pivoted into "long" format. We'll cover these kind of data manipulation in a subsequent module, but at least let's adopt our friendly `df.` naming convention when we make this new long object:
+
+```{r stackit!, echo=TRUE}
+df.long.anscombe <- anscombe %>%
+  pivot_longer(
+    everything(),
+    cols_vary = "slowest",
+    names_to = c(".value", "set"),
+    names_pattern = "(.)(.)"
+  )
+df.long.anscombe
+```
+
+We can replicate the plots:
+
+```{r plotit!, echo=TRUE}
+ggplot(df.long.anscombe, aes(x=x, y=y)) +
+  geom_point() +
+  facet_wrap(~set)
+```
+
+Alan thought the Pearson correlation coefficient (*r*) was about 0.7, but it's actually around 0.8. Notice that the means, SDs, and *r*s are the same across all four sets:
+
+```{r statit!, echo=TRUE}
+df.long.anscombe %>%
+  group_by(set) %>%
+  summarise(
+    count=n(),
+    meanx=mean(x),
+    meany=mean(y),
+    sdx=sd(x),
+    sdy=sd(y),
+    r=cor(x,y)
+  )
+```
